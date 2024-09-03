@@ -1,0 +1,6 @@
+og_image,og_type,og_title,og_description,og_locale,is_satisfied
+True,True,True,True,True,True
+True,True,False,True,True,False
+True,True,True,True,True,True
+True,True,False,False,True,False
+False,False,False,True,True,False
