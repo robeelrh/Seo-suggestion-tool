@@ -2,7 +2,6 @@
 
 ## Prerequisites
 
-fuck you
 Make sure you have the following software installed on your machine:
 
 - Node.js and npm
