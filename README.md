@@ -71,3 +71,9 @@ To start the queue worker for processing jobs, run the following command:
 ```bash
 php artisan queue:work --timeout=0
 ```
+
+### Run frontend
+
+```bash
+npm run serve
+```
