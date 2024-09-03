@@ -1,7 +1,7 @@
-node_modules/*
+node_modules/
 *.zip
 __pycache__/
 extracted/
 .vscode/
-vendor/*
+vendor/
 .env
