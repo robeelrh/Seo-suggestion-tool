@@ -4,7 +4,7 @@
 
 Make sure you have the following software installed on your machine:
 
-- Node.js and npm
+- Node.js and npm [latest]
 - PHP (>=7.4)
 - Composer
 - MySQL or another database supported by Laravel
