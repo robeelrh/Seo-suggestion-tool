@@ -30,11 +30,24 @@ def predict_new_data(model, new_data):
     predicted_is_satisfied = model.predict(new_data)
     return predicted_is_satisfied
 
+def append_to_csv(file_path, iframe_count, is_satisfied):
+    """Append new data to the CSV file."""
+    is_satisfied = 1 if is_satisfied else 0
+    
+    new_row = {
+        "iframe_count": iframe_count,
+        "is_satisfied": is_satisfied,
+    }
+    df = pd.DataFrame([new_row])
+    df.to_csv(file_path, mode='a', header=False, index=False)
+
+
 
 def main(iframe_count, is_satisfied):
     warnings.filterwarnings("ignore", message="X does not have valid feature names, but LinearRegression was fitted with feature names")
-    
-    train_df = load_data(os.getcwd() + '/..' + '/playwright'+ '/suggestions'+'/iframe_count'+ '/data.csv')
+
+    file_path = os.getcwd() + '/..' + '/playwright'+ '/suggestions'+'/iframe_count'+ '/data.csv'
+    train_df = load_data(file_path)
     
     X_train = train_df[['iframe_count']]
     y_train = train_df['is_satisfied']
@@ -62,9 +75,13 @@ def main(iframe_count, is_satisfied):
     for pred, actual in zip(predicted_is_satisfied, y_new):
         # print(f"Predicted is_satisfied: {pred}, Actual is_satisfied: {actual}")
         if not pred:
-            return "Your webpage has no iframes."
+            result =  "Your webpage has no iframes."
         else:
-            return "Iframe count is satisfied."
+            result = "Iframe count is satisfied."
+        
+        append_to_csv(file_path, iframe_count, is_satisfied)
+        
+        return result
         
 if __name__ == "__main__":
     print(main(5,1))

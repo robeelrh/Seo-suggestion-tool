@@ -31,12 +31,23 @@ def predict_new_data(model, new_data):
     return predicted_is_satisfied
 
 
+def append_to_csv(file_path, content_length, is_empty):
+    """Append new data to the CSV file."""
+    is_empty =  1 if is_empty else 0
+    new_row = {
+        "content_length": content_length,
+        "is_empty": is_empty,
+    }
+    df = pd.DataFrame([new_row])
+    df.to_csv(file_path, mode='a', header=False, index=False)
+
+
 def main(content_length, is_empty):
     warnings.filterwarnings("ignore", message="X does not have valid feature names, but LinearRegression was fitted with feature names")
     
-    train_df = load_data(os.getcwd() + '/..' + '/playwright'+ '/suggestions'+'/page_content'+ '/data.csv')
+    file_path = os.getcwd() + '/..' + '/playwright'+ '/suggestions'+'/page_content'+ '/data.csv'
+    train_df = load_data(file_path)
 
-    
     X_train = train_df[['content_length']]
     y_train = train_df['is_empty']
     
@@ -63,10 +74,13 @@ def main(content_length, is_empty):
     for pred, actual in zip(predicted_is_satisfied, y_new):
         # print(f"Predicted is_satisfied: {pred}, Actual is_satisfied: {actual}")
         if pred == 1:
-            return "The content of the webpage cannot be empty."
+            result = "The content of the webpage cannot be empty."
         else:
-            return "The content of webpage is satisfied."
+            result =  "The content of webpage is satisfied."
         
+        append_to_csv(file_path, content_length, is_empty)
+
+        return result
         
 if __name__ == "__main__":
     print(main(61,0))

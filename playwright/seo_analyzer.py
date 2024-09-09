@@ -258,11 +258,12 @@ async def trigger_tests(url, primaryKeyword):
             
         doesFileExist = await loadTraceFilesForSeoTest()
         if doesFileExist:
-            print("File exists")
             # Start the context without tracing
             page = await context.new_page()
+
             html_file_name, html_content, trace_network = extract_html_file(f"{args.scraped_url_id}.zip")
             await page.goto(f'file://{base_path}/extracted/scrapedUrlId_{args.scraped_url_id}/resources/{html_file_name}')
+            print("File exists")
         else:
             await context.tracing.start(name="trace", screenshots=True, snapshots=True)
             page = await context.new_page()

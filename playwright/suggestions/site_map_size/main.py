@@ -30,11 +30,25 @@ def predict_new_data(model, new_data):
     predicted_is_satisfied = model.predict(new_data)
     return predicted_is_satisfied
 
+def append_to_csv(file_path, no_of_links, size, is_satisfied):
+    """Append new data to the CSV file."""
+    is_satisfied =  1 if is_satisfied else 0
+    
+    new_row = {
+        "no_of_links": no_of_links,
+        "size":size,
+        "is_satisfied": is_satisfied,
+    }
+    df = pd.DataFrame([new_row])
+    df.to_csv(file_path, mode='a', header=False, index=False)
+
+
 
 def main(no_of_links,size, is_satisfied):
     warnings.filterwarnings("ignore", message="X does not have valid feature names, but LinearRegression was fitted with feature names")
     
-    train_df = load_data(os.getcwd() + '/..' + '/playwright'+'/suggestions'+'/site_map_size'+ '/data.csv')
+    file_path = os.getcwd() + '/..' + '/playwright'+ '/suggestions'+'/site_map_size'+ '/data.csv'
+    train_df = load_data(file_path)
 
     
     X_train = train_df[['no_of_links', 'size']]
@@ -69,10 +83,13 @@ def main(no_of_links,size, is_satisfied):
                 response += " Number of links should be less then 40000."
             if fields.size > 40000000:
                 response += " The size of content should be less then 40000000."
-            return response
+            result = response
         else:
-            return "The content on webpage is satisfied."
+            result = "The content on webpage is satisfied."
     
+        append_to_csv(file_path, no_of_links, size, is_satisfied)
+
+        return result
         
 if __name__ == "__main__":
     print(main(39912,40000090,0))

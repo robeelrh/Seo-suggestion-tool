@@ -30,12 +30,27 @@ def predict_new_data(model, new_data):
     predicted_is_satisfied = model.predict(new_data)
     return predicted_is_satisfied
 
+def append_to_csv(file_path, og_image,  og_type,og_title,og_description, og_locale, is_satisfied):
+    """Append new data to the CSV file."""
+    new_row = {
+        "og_image": og_image,
+        "og_type": og_type,
+        "og_title": og_title,
+        "og_description": og_description,
+        "og_locale": og_locale,
+        "is_satisfied": is_satisfied,
+    }
+    df = pd.DataFrame([new_row])
+    df.to_csv(file_path, mode='a', header=False, index=False)
+
 
 def main(og_image, og_type, og_title, og_description, og_locale, is_satisfied):
     warnings.filterwarnings("ignore", message="X does not have valid feature names, but LinearRegression was fitted with feature names")
     
     
-    train_df = load_data(os.getcwd() + '/..' + '/playwright'+ '/suggestions'+'/open_graph_protocols'+ '/data.csv')
+    file_path = os.getcwd() + '/..' + '/playwright'+ '/suggestions'+'/open_graph_protocols'+ '/data.csv'
+    train_df = load_data(file_path)
+
 
     
     X_train = train_df[['og_image','og_type','og_title','og_description', 'og_locale']]
@@ -79,9 +94,13 @@ def main(og_image, og_type, og_title, og_description, og_locale, is_satisfied):
                 response+=" The webpage is missing open graph property og:description"
             if not fields.og_locale:
                 response+=" The webpage is missing open graph property og:locale"
-            return response
+            result = response
         else:
-            return "The open graph protocols are already satisfied."
+            result = "The open graph protocols are already satisfied."
+        
+        append_to_csv(file_path, og_image, og_type, og_title, og_description, og_locale, is_satisfied)
+
+        return result
         
 if __name__ == "__main__":
     print(main(True,True,False,False,True,False))

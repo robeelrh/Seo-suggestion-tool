@@ -30,11 +30,24 @@ def predict_new_data(model, new_data):
     predicted_is_satisfied = model.predict(new_data)
     return predicted_is_satisfied
 
+def append_to_csv(file_path, meta_encoding,  is_satisfied):
+    """Append new data to the CSV file."""
+    meta_encoding = 1 if meta_encoding else 0
+    is_satisfied = 1 if is_satisfied else 0
+    
+    new_row = {
+        "meta_encoding": meta_encoding,
+        "is_satisfied": is_satisfied,
+    }
+    df = pd.DataFrame([new_row])
+    df.to_csv(file_path, mode='a', header=False, index=False)
+
 
 def main(meta_encoding, is_satisfied):
     warnings.filterwarnings("ignore", message="X does not have valid feature names, but LinearRegression was fitted with feature names")
     
-    train_df = load_data(os.getcwd() + '/..' + '/playwright'+ '/suggestions'+'/meta_encoding'+ '/data.csv')
+    file_path = os.getcwd() + '/..' + '/playwright'+ '/suggestions'+'/meta_encoding'+ '/data.csv'
+    train_df = load_data(file_path)
 
     
     X_train = train_df[['meta_encoding']]
@@ -63,9 +76,13 @@ def main(meta_encoding, is_satisfied):
     for pred, actual in zip(predicted_is_satisfied, y_new):
         # print(f"Predicted is_satisfied: {pred}, Actual is_satisfied: {actual}")
         if not pred:
-            return "There is no meta encoding in your website."       
+            result = "There is no meta encoding in your website."       
         else:
-            return "The meta encoding is already satisfied."
+            result = "The meta encoding is already satisfied."
+        
+        append_to_csv(file_path ,meta_encoding, is_satisfied)
+
+        return result
         
 if __name__ == "__main__":
     print(main(0,0))

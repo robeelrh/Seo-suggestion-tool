@@ -30,11 +30,21 @@ def predict_new_data(model, new_data):
     predicted_is_satisfied = model.predict(new_data)
     return predicted_is_satisfied
 
+def append_to_csv(file_path, description_length,  is_satisfied):
+    """Append new data to the CSV file."""
+    new_row = {
+        "description_length": description_length,
+        "is_satisfied": is_satisfied,
+    }
+    df = pd.DataFrame([new_row])
+    df.to_csv(file_path, mode='a', header=False, index=False)
+
 
 def main(description_length,is_satisfied):
     warnings.filterwarnings("ignore", message="X does not have valid feature names, but LinearRegression was fitted with feature names")
     
-    train_df = load_data(os.getcwd() + '/..' + '/playwright'+ '/suggestions'+'/meta_description'+ '/data.csv')
+    file_path = os.getcwd() + '/..' + '/playwright'+ '/suggestions'+'/meta_description'+ '/data.csv'
+    train_df = load_data(file_path)
 
     
     X_train = train_df[['description_length']]
@@ -68,10 +78,13 @@ def main(description_length,is_satisfied):
                 response += "Increas the meta description length."
             elif description_length > 300:
                 response += "Decrease the meta description length."
-            return response
+            result = response
         else:
-            return "The description length is already satisfied."
-            
+            result ="The description length is already satisfied."
+
+        append_to_csv(file_path, description_length,  is_satisfied)
+        
+        return result
         
 if __name__ == "__main__":
     print(main(251,True))

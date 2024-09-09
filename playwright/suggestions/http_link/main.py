@@ -30,12 +30,23 @@ def predict_new_data(model, new_data):
     predicted_is_satisfied = model.predict(new_data)
     return predicted_is_satisfied
 
+def append_to_csv(file_path, http, https, is_satisfied):
+    """Append new data to the CSV file."""
+    new_row = {
+        "http": http,
+        "https":https,
+        "is_satisfied": is_satisfied,
+    }
+    df = pd.DataFrame([new_row])
+    df.to_csv(file_path, mode='a', header=False, index=False)
+
 
 def main(http, https, is_satisfied):
     warnings.filterwarnings("ignore", message="X does not have valid feature names, but LinearRegression was fitted with feature names")
     
-    train_df = load_data(os.getcwd() + '/..' + '/playwright'+ '/suggestions'+'/http_link'+ '/data.csv')
-    
+    file_path = os.getcwd() + '/..' + '/playwright'+ '/suggestions'+'/http_link'+ '/data.csv'
+    train_df = load_data(file_path)
+
     X_train = train_df[['http','https']]
     y_train = train_df['is_satisfied']
     
@@ -64,9 +75,13 @@ def main(http, https, is_satisfied):
     for pred, actual in zip(predicted_is_satisfied, y_new):
         # print(f"Predicted is_satisfied: {pred}, Actual is_satisfied: {actual}")
         if not pred:
-            return "The anchor tags should have HTTPS protocol"
+            result =  "The anchor tags should have HTTPS protocol"
         else:
-            return "The anchor tags have HTTPS protocol"
+            result =  "The anchor tags have HTTPS protocol"
+            
+        append_to_csv(file_path, http, https, is_satisfied)
+
+        return result
         
 if __name__ == "__main__":
     print(main(True,False,False))

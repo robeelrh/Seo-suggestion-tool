@@ -23,7 +23,6 @@ def upload_image_to_db(image_path, scraped_url_id):
 
 def extract_html_file(zip_path):
     extractedPath = f"{os.getcwd()}/extracted/"
-    print(f"THIS IS PATH", extractedPath)
     with zipfile.ZipFile(zip_path, 'r') as zip_ref:
         zip_ref.extractall(f"{extractedPath}scrapedUrlId_{zip_path.split('.')[0]}")
         
@@ -38,10 +37,10 @@ def extract_html_file(zip_path):
         trace_network = f.read()
                 
         json_objects = [json.loads(obj) for obj in trace_network.split('\n') if obj.strip()]
+        print('file name: ',json_objects[0]["snapshot"]["response"]["content"])
         
-        # print("json_object: ", json_objects[1]["snapshot"]["response"]["content"]["_sha1"])
-        html_file = json_objects[0]["snapshot"]["response"]["content"]["_sha1"]
-        # html_file = json_objects[0]["snapshot"]["response"]["content"]["_sha1"]
+        print("json_object: ", json_objects[1]["snapshot"]["response"]["content"])
+        html_file = json_objects[1]["snapshot"]["response"]["content"]["_sha1"]
         print("html_file: ", html_file)
     with open(f"{extractedPath}scrapedUrlId_{zip_path.split('.')[0]}/resources/{html_file}", 'r', encoding='utf-8') as file:
         content = file.read()
@@ -90,7 +89,7 @@ def extract_words_from_body(zip_path):
         trace_network = f.read()
                 
         json_objects = [json.loads(obj) for obj in trace_network.split('\n') if obj.strip()]
-        html_file = json_objects[0]["snapshot"]["response"]["content"]["_sha1"]
+        html_file = json_objects[1]["snapshot"]["response"]["content"]["_sha1"]
 
     with open(f"{extractedPath}scrapedUrlId_{zip_path.split('.')[0]}/resources/{html_file}", 'r', encoding='utf-8') as file:
         content = file.read()
@@ -113,7 +112,7 @@ async def check_file_size(zip_path):
         trace_network = f.read()
                 
         json_objects = [json.loads(obj) for obj in trace_network.split('\n') if obj.strip()]
-        html_file = json_objects[0]["snapshot"]["response"]["content"]["_sha1"]
+        html_file = json_objects[1]["snapshot"]["response"]["content"]["_sha1"]
     
     class data(object): pass
     data.size = 0

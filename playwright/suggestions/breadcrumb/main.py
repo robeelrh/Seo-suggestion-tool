@@ -30,12 +30,23 @@ def predict_new_data(model, new_data):
     predicted_is_satisfied = model.predict(new_data)
     return predicted_is_satisfied
 
+def append_to_csv(file_path, breadcrumb, is_satisfied):
+    """Append new data to the CSV file."""
+    breadcrumb = 1 if breadcrumb else 0
+    is_satisfied = 1 if is_satisfied else 0
+    new_row = {
+        "breadcrumb": breadcrumb,
+        "is_satisfied": is_satisfied,
+    }
+    df = pd.DataFrame([new_row])
+    df.to_csv(file_path, mode='a', header=False, index=False)
 
 
 def main(breadcrumb, is_satisfied):
     warnings.filterwarnings("ignore", message="X does not have valid feature names, but LinearRegression was fitted with feature names")
     
-    train_df = load_data(os.getcwd() + '/..' + '/playwright'+ '/suggestions'+'/breadcrumb'+ '/data.csv')
+    file_path = os.getcwd() + '/../playwright/suggestions/breadcrumb/data.csv'
+    train_df = load_data(file_path)
     
     X_train = train_df[['breadcrumb']]
     y_train = train_df['is_satisfied']
@@ -43,10 +54,6 @@ def main(breadcrumb, is_satisfied):
     X_train_split, X_test_split, y_train_split, y_test_split = train_test_split(X_train, y_train, test_size=0.2, random_state=42)
     
     model = train_model(X_train_split, y_train_split)
-    
-    # Evaluate the model on the testing set
-    # print("Evaluation on testing set:")
-    # evaluate_model(model, X_test_split, y_test_split)
     
     test_df = pd.DataFrame({
         "breadcrumb": [breadcrumb],
@@ -56,16 +63,17 @@ def main(breadcrumb, is_satisfied):
     X_new = test_df[['breadcrumb']]
     y_new = test_df['is_satisfied']
     
-    # Make predictions on the new data
-    # print("\nPredictions on new data:")
     predicted_is_satisfied = predict_new_data(model, X_new)
     
     for pred, actual in zip(predicted_is_satisfied, y_new):
-        # print(f"Predicted is_satisfied: {pred}, Actual is_satisfied: {actual}")
         if not pred:
-            return "The HTML should contain breadcrumb structured data found in the HTML"
+            result = "The HTML should contain breadcrumb structured data found in the HTML"
         else:
-            return "The HTML already contains breadcrumb structured data."
+            result = "The HTML already contains breadcrumb structured data."
+        
+        append_to_csv(file_path, breadcrumb, is_satisfied)
+        
+        return result
         
 if __name__ == "__main__":
     print(main(1, 1))

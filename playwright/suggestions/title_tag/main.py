@@ -29,9 +29,22 @@ def predict_new_data(model, new_data):
     predicted_is_satisfied = model.predict(new_data)
     return predicted_is_satisfied
 
-def main(title_length,is_satisfied):
+def append_to_csv(file_path, title_length, is_satisfied):
+    """Append new data to the CSV file."""
+    is_satisfied =  1 if is_satisfied else 0
+    new_row = {
+        "title_length": title_length,
+        "is_satisfied": is_satisfied,
+    }
+    df = pd.DataFrame([new_row])
+    df.to_csv(file_path, mode='a', header=False, index=False)
 
-    train_df = load_data(os.getcwd() + '/..' + '/playwright'+ '/suggestions'+'/title_tag'+ '/data.csv')
+
+def main(title_length,is_satisfied):
+    warnings.filterwarnings("ignore", message="X does not have valid feature names, but LinearRegression was fitted with feature names")
+
+    file_path = os.getcwd() + '/..' + '/playwright'+ '/suggestions'+'/title_tag'+ '/data.csv'
+    train_df = load_data(file_path)
  
     
     X_train = train_df[['title_length']]
@@ -66,10 +79,13 @@ def main(title_length,is_satisfied):
                 response += " Decrease the title length to 70 characters to improve satisfaction."
             else:
                 response += "Try adjusting the title length to improve satisfaction within the range of 50 to 70 characters."
-            return response
+            result = response
         else:
-            return  "The title tag length is satisfactory."
+            result =  "The title tag length is satisfactory."
+        
+        append_to_csv(file_path, title_length, is_satisfied)
 
+        return result
 
 if __name__ == "__main__":
     print(main(51,1))

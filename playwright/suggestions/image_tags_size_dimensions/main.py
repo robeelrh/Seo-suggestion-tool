@@ -30,12 +30,30 @@ def predict_new_data(model, new_data):
     predicted_is_satisfied = model.predict(new_data)
     return predicted_is_satisfied
 
+def append_to_csv(file_path, is_alt_satisfied, is_size_satisfied, is_dimension_satisfied, is_satisfied):
+    """Append new data to the CSV file."""
+    is_alt_satisfied =  1 if is_alt_satisfied else 0
+    is_size_satisfied =  1 if is_size_satisfied else 0
+    is_dimension_satisfied =  1 if is_dimension_satisfied else 0
+    is_satisfied = 1 if is_satisfied else 0
+    
+    new_row = {
+        "is_alt_satisfied": is_alt_satisfied,
+        "is_size_satisfied": is_size_satisfied,
+        "is_dimension_satisfied":is_dimension_satisfied,
+        "is_satisfied": is_satisfied,
+    }
+    df = pd.DataFrame([new_row])
+    df.to_csv(file_path, mode='a', header=False, index=False)
+
+
 
 def main(is_alt_satisfied,is_size_satisfied,is_dimension_satisfied,is_satisfied):
     warnings.filterwarnings("ignore", message="X does not have valid feature names, but LinearRegression was fitted with feature names")
     
-    train_df = load_data(os.getcwd() + '/..' + '/playwright'+ '/suggestions'+'/image_tags_size_dimensions'+ '/data.csv')
-    
+    file_path = os.getcwd() + '/..' + '/playwright'+ '/suggestions'+'/image_tags_size_dimensions'+ '/data.csv'
+    train_df = load_data(file_path)
+
     
     X_train = train_df[['is_alt_satisfied','is_size_satisfied','is_dimension_satisfied']]
     y_train = train_df['is_satisfied']
@@ -73,9 +91,13 @@ def main(is_alt_satisfied,is_size_satisfied,is_dimension_satisfied,is_satisfied)
                 response+= " Image size is not appropriate."
             if not fields.is_dimension_satisfied:
                 response += " Image dimensions are not optimal."
-            return response
+            result =  response
         else:
-            return "Your image tags are already correct."
+            result =  "Your image tags are already correct."
+
+        append_to_csv(file_path, is_alt_satisfied, is_size_satisfied, is_dimension_satisfied,is_satisfied)
             
+        return result
+        
 if __name__ == "__main__":
     print(main(1,1,0,0))
