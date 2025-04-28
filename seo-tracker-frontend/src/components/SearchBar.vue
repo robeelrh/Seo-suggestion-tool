@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import axios from "axios";
+import apiService from "@/api/service";
 import DropDownButton from "@/components/DropDownButton.vue";
 import { useScrapersStore } from "@/store/scrapersStore";
 
@@ -72,8 +72,8 @@ export default {
         args: ["--project-id", toString(this.getProjectId)], // Ensure to call function and convert to string
       };
 
-      axios
-        .post("http://127.0.0.1:8000/api/script_runner/run", payload)
+      apiService
+        .post("/script_runner/run", payload)
         .then((response) => {
           console.log("Response:", response.data);
         })

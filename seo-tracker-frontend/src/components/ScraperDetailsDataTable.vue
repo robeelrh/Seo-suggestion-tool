@@ -87,7 +87,7 @@
 </template>
 
 <script>
-import axios from "axios";
+import apiService from "@/api/service";
 import SearchBar from "@/components/SearchBar.vue";
 import { useScrapersStore } from "@/store/scrapersStore";
 
@@ -118,11 +118,10 @@ export default {
       const store = useScrapersStore();
       const scraperId = store.scraperId;
 
-      axios
-        .post("http://127.0.0.1:8000/api/scrapers/urls/get_by_session", {
+      apiService
+        .post("/scrapers/urls/get_by_session", {
           scraper_id: scraperId,
         })
-
         .then((response) => {
           this.rows = response.data.map((item) => ({
             id: item.id,

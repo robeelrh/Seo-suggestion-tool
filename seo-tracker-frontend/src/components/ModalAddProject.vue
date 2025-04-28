@@ -111,7 +111,7 @@
 </template>
 
 <script>
-import axios from "axios";
+import apiService from "@/api/service";
 export default {
   name: "ModalAddProject",
   data() {
@@ -130,8 +130,8 @@ export default {
     async postAddNewProject() {
       console.log("creating new project");
       this.isSubmitting = true;
-      axios
-        .post("http://127.0.0.1:8000/api/project/create", {
+      apiService
+        .post("/project/create", {
           url: this.url,
           crawling_frequency: this.crawlingFrequency,
           max_pages_to_crawl: this.maxPagesToCrawl,

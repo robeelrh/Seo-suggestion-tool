@@ -45,7 +45,7 @@
 </template>
 
 <script>
-import axios from "axios";
+import apiService from "@/api/service";
 import { useScrapersStore } from "@/store/scrapersStore";
 import UrlDetailsTableRow from "@/components/UrlDetailTableRow.vue";
 
@@ -67,12 +67,9 @@ export default {
     async fetchData() {
       const store = useScrapersStore();
       try {
-        const response = await axios.post(
-          "http://127.0.0.1:8000/api/scrapers/urls/data/get",
-          {
-            scraped_url_id: parseInt(store.scrapedUrlId),
-          },
-        );
+        const response = await apiService.post("/scrapers/urls/data/get", {
+          scraped_url_id: parseInt(store.scrapedUrlId),
+        });
         this.rows = response.data;
         this.rows = this.processResponse(this.rows);
         this.originalError = Object.keys(response.data);
@@ -84,7 +81,7 @@ export default {
           });
         } else {
           console.error(
-            "this.rows is not an array or is not properly defined.",
+            "this.rows is not an array or is not properly defined."
           );
         }
       } catch (error) {
@@ -95,84 +92,84 @@ export default {
       let processedRows = [];
       Object.entries(data).forEach(([testName, testValue]) => {
         if (Array.isArray(testValue) && testValue.length > 0) {
-            const item = testValue.at(-1);
-            let error = "No error";
-            let status = "Not Fixed";
-            let weight = item.weight || "N/A";
-            const suggestion = item.suggestion;
-            switch (testName) {
-              case "seo_test_check_content":
-                error = item.is_empty ? "No content found" : "Content found";
-                status = item.is_empty ? "Not Fixed" : "Fixed";
-                break;
-              case "seo_test_doc_type":
-              case "seo_test_favicons":
-              case "seo_test_http_links":
-                error = `${testName.replace(/_/g, " ")}: ${item.is_satisfied ? "Issue detected" : "No issues"}`;
-                status = item.is_satisfied ? "Not Fixed" : "Fixed";
-                break;
-              case "seo_test_iframes_counts":
-                error = `Iframes count: ${item.iframes_count}, ${item.is_satisfied ? "Issue detected" : "No issues"}`;
-                status = item.is_satisfied ? "Not Fixed" : "Fixed";
-                break;
-              case "seo_test_meta_descriptions":
-                error = `Meta description: ${item.description}, ${item.is_satisfied ? "Satisfies requirements" : "Does not satisfy requirements"}`;
-                status = item.is_satisfied ? "Not Fixed" : "Fixed";
-                break;
-              case "seo_test_meta_encodings":
-              case "seo_test_open_graph_protocols":
-              case "seo_test_resources_compressions":
-              case "seo_test_sitemap_size_and_links":
-                error = `${testName.replace(/_/g, " ")}: ${item.is_satisfied ? "No issues" : "Issue detected"}`;
-                status = item.is_satisfied ? "Not Fixed" : "Fixed";
-                break;
-              case "seo_test_header_tags":
-                error =
-                  "Header tags check, H2 tags: " +
-                  (item.is_h2_satisfied ? "Satisfies" : "Does not satisfy");
-                status = item.is_h2_satisfied ? "Fixed" : "Not Fixed";
-                break;
-              case "seo_test_img_tags_size_dims":
-                error =
-                  "Image tags size and dimensions check, Alt and Size: " +
-                  (item.is_alt_satisfied && item.is_size_satisfied
-                    ? "Satisfies"
-                    : "Does not satisfy");
-                status =
-                  item.is_alt_satisfied && item.is_size_satisfied
-                    ? "Fixed"
-                    : "Not Fixed";
-                break;
-              case "seo_test_meta_tags":
-                error = `Meta tags: Description length satisfied: ${item.is_description_length_satisfied ? "Yes" : "No"}, Title length satisfied: ${item.is_title_length_satisfied ? "Yes" : "No"}`;
-                status =
-                  item.is_description_length_satisfied &&
-                  item.is_title_length_satisfied
-                    ? "Not Fixed"
-                    : "Fixed";
-                break;
-              case "seo_test_noindex_in_sitemap":
-                error = `${testName.replace(/_/g, " ")}: ${item.is_satisfied ? "No issues" : "Issue detected"}`;
-                status = item.is_satisfied ? "Not Fixed" : "Fixed";
-                break;
-              case "seo_test_title_tags":
-                error = `Title: ${item.title}, Length: ${item.title_len}, ${item.is_satisfied ? "Satisfies requirements" : "Does not satisfy requirements"}`;
-                status = item.is_satisfied ? "Not Fixed" : "Fixed";
-                break;
-              default:
-                error = `Unhandled test: ${testName}`;
-                status = "Check manually";
-            }
+          const item = testValue.at(-1);
+          let error = "No error";
+          let status = "Not Fixed";
+          let weight = item.weight || "N/A";
+          const suggestion = item.suggestion;
+          switch (testName) {
+            case "seo_test_check_content":
+              error = item.is_empty ? "No content found" : "Content found";
+              status = item.is_empty ? "Not Fixed" : "Fixed";
+              break;
+            case "seo_test_doc_type":
+            case "seo_test_favicons":
+            case "seo_test_http_links":
+              error = `${testName.replace(/_/g, " ")}: ${item.is_satisfied ? "Issue detected" : "No issues"}`;
+              status = item.is_satisfied ? "Not Fixed" : "Fixed";
+              break;
+            case "seo_test_iframes_counts":
+              error = `Iframes count: ${item.iframes_count}, ${item.is_satisfied ? "Issue detected" : "No issues"}`;
+              status = item.is_satisfied ? "Not Fixed" : "Fixed";
+              break;
+            case "seo_test_meta_descriptions":
+              error = `Meta description: ${item.description}, ${item.is_satisfied ? "Satisfies requirements" : "Does not satisfy requirements"}`;
+              status = item.is_satisfied ? "Not Fixed" : "Fixed";
+              break;
+            case "seo_test_meta_encodings":
+            case "seo_test_open_graph_protocols":
+            case "seo_test_resources_compressions":
+            case "seo_test_sitemap_size_and_links":
+              error = `${testName.replace(/_/g, " ")}: ${item.is_satisfied ? "No issues" : "Issue detected"}`;
+              status = item.is_satisfied ? "Not Fixed" : "Fixed";
+              break;
+            case "seo_test_header_tags":
+              error =
+                "Header tags check, H2 tags: " +
+                (item.is_h2_satisfied ? "Satisfies" : "Does not satisfy");
+              status = item.is_h2_satisfied ? "Fixed" : "Not Fixed";
+              break;
+            case "seo_test_img_tags_size_dims":
+              error =
+                "Image tags size and dimensions check, Alt and Size: " +
+                (item.is_alt_satisfied && item.is_size_satisfied
+                  ? "Satisfies"
+                  : "Does not satisfy");
+              status =
+                item.is_alt_satisfied && item.is_size_satisfied
+                  ? "Fixed"
+                  : "Not Fixed";
+              break;
+            case "seo_test_meta_tags":
+              error = `Meta tags: Description length satisfied: ${item.is_description_length_satisfied ? "Yes" : "No"}, Title length satisfied: ${item.is_title_length_satisfied ? "Yes" : "No"}`;
+              status =
+                item.is_description_length_satisfied &&
+                item.is_title_length_satisfied
+                  ? "Not Fixed"
+                  : "Fixed";
+              break;
+            case "seo_test_noindex_in_sitemap":
+              error = `${testName.replace(/_/g, " ")}: ${item.is_satisfied ? "No issues" : "Issue detected"}`;
+              status = item.is_satisfied ? "Not Fixed" : "Fixed";
+              break;
+            case "seo_test_title_tags":
+              error = `Title: ${item.title}, Length: ${item.title_len}, ${item.is_satisfied ? "Satisfies requirements" : "Does not satisfy requirements"}`;
+              status = item.is_satisfied ? "Not Fixed" : "Fixed";
+              break;
+            default:
+              error = `Unhandled test: ${testName}`;
+              status = "Check manually";
+          }
 
-            processedRows.push({
-              error,
-              status,
-              weight,
-              suggestion,
-              priority: "Medium", // Adjust priority as needed
-              action: "See Solution",
-            });
-            console.log(error);
+          processedRows.push({
+            error,
+            status,
+            weight,
+            suggestion,
+            priority: "Medium", // Adjust priority as needed
+            action: "See Solution",
+          });
+          console.log(error);
         } else {
           // Handling cases where data is not an array or empty
           processedRows.push({

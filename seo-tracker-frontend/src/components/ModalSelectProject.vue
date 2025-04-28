@@ -83,7 +83,7 @@
 </template>
 
 <script>
-import axios from "axios";
+import apiService from "@/api/service";
 import { useScrapersStore } from "@/store/scrapersStore";
 
 export default {
@@ -111,9 +111,7 @@ export default {
     },
     async getProjects() {
       try {
-        const response = await axios.post(
-          "http://127.0.0.1:8000/api/project/get_all"
-        );
+        const response = await apiService.post("/project/get_all");
         if (response.data.success) {
           this.projectList = response.data.projects;
         } else {

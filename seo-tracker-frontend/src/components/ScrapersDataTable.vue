@@ -75,7 +75,7 @@
 
 <script>
 import SearchBar from "@/components/SearchBar.vue";
-import axios from "axios";
+import apiService from "@/api/service";
 import moment from "moment";
 import { useScrapersStore } from "@/store/scrapersStore";
 import { defineComponent, watch } from "@vue/composition-api";
@@ -124,12 +124,9 @@ export default defineComponent({
       }
 
       try {
-        const response = await axios.post(
-          "http://127.0.0.1:8000/api/scrapers/get_all_by_project",
-          {
-            project_id: projectId,
-          }
-        );
+        const response = await apiService.post("/scrapers/get_all_by_project", {
+          project_id: projectId,
+        });
 
         const data = response.data;
         this.rows = this.transformData(data);
@@ -149,8 +146,8 @@ export default defineComponent({
       const formattedCurrentDate = currentDate.toISOString().split("T")[0];
 
       try {
-        const response = await axios.post(
-          "http://127.0.0.1:8000/api/dashboard/get_scraper_by_time",
+        const response = await apiService.post(
+          "/dashboard/get_scraper_by_time",
           {
             project_id: projectId,
             start_date: startingDate,

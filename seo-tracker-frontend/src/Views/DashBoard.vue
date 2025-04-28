@@ -62,7 +62,7 @@ import ModalAddProject from "@/components/ModalAddProject.vue";
 import ModalSelectProject from "@/components/ModalSelectProject.vue";
 import { stats as cardData } from "@/Data/statistics";
 import { useScrapersStore } from "@/store/scrapersStore";
-import axios from "axios";
+import apiService from "@/api/service";
 
 export default {
   components: {
@@ -113,10 +113,7 @@ export default {
       console.log("payload: ", payload);
 
       try {
-        const response = await axios.post(
-          "http://127.0.0.1:8000/api/script_runner/run",
-          payload
-        );
+        const response = await apiService.post("/script_runner/run", payload);
         console.log("Response:", response.data);
       } catch (error) {
         console.error(
@@ -139,8 +136,8 @@ export default {
         console.error("projectId is not available in sessionStorage");
         return;
       }
-      axios
-        .post("http://127.0.0.1:8000/api/dashboard/get_crawling_frequency", {
+      apiService
+        .post("/dashboard/get_crawling_frequency", {
           project_id: projectId,
         })
         .then((response) => {
@@ -157,8 +154,8 @@ export default {
         console.error("projectId is not available in sessionStorage");
         return;
       }
-      axios
-        .post("http://127.0.0.1:8000/api/dashboard/get_crawler_speed", {
+      apiService
+        .post("/dashboard/get_crawler_speed", {
           project_id: projectId,
         })
         .then((response) => {
@@ -175,8 +172,8 @@ export default {
         console.error("projectId is not available in sessionStorage");
         return;
       }
-      axios
-        .post("http://127.0.0.1:8000/api/dashboard/get_crawled_urls_count", {
+      apiService
+        .post("/dashboard/get_crawled_urls_count", {
           project_id: projectId,
         })
         .then((response) => {

@@ -49,7 +49,7 @@
 <script>
 import AreaChart from "@/components/AreaChart.vue";
 import { useScrapersStore } from "@/store/scrapersStore";
-import axios from "axios";
+import apiService from "@/api/service";
 
 export default {
   components: {
@@ -72,10 +72,7 @@ export default {
       console.log("payload: ", payload);
 
       try {
-        const response = await axios.post(
-          "http://127.0.0.1:8000/api/script_runner/run",
-          payload
-        );
+        const response = await apiService.post("/script_runner/run", payload);
         console.log("Response:", response.data);
       } catch (error) {
         console.error(

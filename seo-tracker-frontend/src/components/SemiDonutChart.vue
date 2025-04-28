@@ -12,7 +12,7 @@
 
 <script>
 import VueApexCharts from "vue-apexcharts";
-import axios from "axios";
+import apiService from "@/api/service";
 import { useScrapersStore } from "@/store/scrapersStore";
 
 export default {
@@ -79,12 +79,9 @@ export default {
       const store = useScrapersStore();
       const scraperId = store.scraperId;
       try {
-        const response = await axios.post(
-          "http://127.0.0.1:8000/api/scraper/get_health_info",
-          {
-            scraper_id: scraperId,
-          }
-        );
+        const response = await apiService.post("/scraper/get_health_info", {
+          scraper_id: scraperId,
+        });
 
         // this.series = [90, 10]
         this.series = [

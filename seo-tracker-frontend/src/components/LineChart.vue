@@ -14,7 +14,7 @@
 
 <script>
 import VueApexCharts from "vue-apexcharts";
-import axios from "axios";
+import apiService from "@/api/service";
 import moment from "moment";
 import { useScrapersStore } from "@/store/scrapersStore";
 
@@ -76,8 +76,8 @@ export default {
       const store = useScrapersStore();
       const projectId = store.projectId;
 
-      axios
-        .post("http://127.0.0.1:8000/api/dashboard/get_scraper_performance", {
+      apiService
+        .post("/dashboard/get_scraper_performance", {
           project_id: projectId,
         })
         .then((response) => {

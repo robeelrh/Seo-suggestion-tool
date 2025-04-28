@@ -15,7 +15,7 @@
 
 <script>
 import VueApexCharts from "vue-apexcharts";
-import axios from "axios";
+import apiService from "@/api/service";
 import { useScrapersStore } from "@/store/scrapersStore";
 // import { setTimeout } from 'core-js';
 
@@ -93,11 +93,11 @@ export default {
       const store = useScrapersStore();
       const scraperId = store.scraperId;
       try {
-        const response = await axios.post(
-          "http://127.0.0.1:8000/api/scraper/get_page_status_code_status",
+        const response = await apiService.post(
+          "/scraper/get_page_status_code_status",
           {
             scraper_id: scraperId,
-          },
+          }
         );
         this.series[0]["data"] = [
           response.data.indexable_url_count,

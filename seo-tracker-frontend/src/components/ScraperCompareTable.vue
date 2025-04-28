@@ -46,7 +46,7 @@
 import ScraperCompareTableRow from "@/components/ScraperCompareTableRow.vue";
 import DropDownButton from "@/components/DropDownButton.vue";
 import { useScrapersStore } from "@/store/scrapersStore";
-import axios from "axios";
+import apiService from "@/api/service";
 
 export default {
   name: "ScraperCompareTable",
@@ -73,12 +73,9 @@ export default {
   methods: {
     async fetchAllScrapers(projectId) {
       try {
-        const response = await axios.post(
-          "http://127.0.0.1:8000/api/scrapers/get_all_by_project",
-          {
-            project_id: projectId,
-          }
-        );
+        const response = await apiService.post("/scrapers/get_all_by_project", {
+          project_id: projectId,
+        });
         this.scrapers = response.data;
 
         this.features = Object.keys(this.scrapers[0]);

@@ -61,7 +61,7 @@
 </template>
 
 <script>
-import axios from "axios";
+import apiService from "@/api/service";
 import { useScrapersStore } from "@/store/scrapersStore";
 
 export default {
@@ -89,12 +89,9 @@ export default {
       const store = useScrapersStore();
       const scraperId = store.scraperId;
       try {
-        const response = await axios.post(
-          "http://127.0.0.1:8000/api/scraper/get_issue_info",
-          {
-            scraper_id: scraperId,
-          },
-        );
+        const response = await apiService.post("/scraper/get_issue_info", {
+          scraper_id: scraperId,
+        });
         const data = response.data;
         this.issues = this.transformResponseToIssues(data);
       } catch (error) {
