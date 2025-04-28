@@ -2,9 +2,6 @@
   <div class="flex flex-row justify-between bg-white py-6 px-6 border-b">
     <div class="flex flex-row gap-4">
       <div>
-        <img src="/icons/wemasy-logo.svg" alt="Wemasy Logo" />
-      </div>
-      <div>
         <button
           class="py-1 px-3 flex flex-row gap-2 items-center border rounded-lg hover:bg-gray-50"
         >
